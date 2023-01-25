@@ -1,0 +1,105 @@
+\section{Introduction}
+These are notes from the Winter 2023 eCHT course "K-Theory", based on lectures, discussions, and literature, in particular \cite{Dugger} and \cite{Hatcher-vec}. The material presented is not original, but we hope to give a unique perspective. In particular, we are inclined to use categorical arguments whenever available and hope to convince others of the benefits of this approach. 
+\section{Algebraic K-Theory}
+All rings will be assumed to live in $\CRing$, the category of commutative Noetherian rings with unity.
+
+Let us first define what it means for an $R-$module $M$ to be \defn{projective}. The following lemma gives several equivalent conditions. If either (and hence all) hold, we say $M$ is projective.
+\begin{lemma} The following are equivalent for an $R-$module $M$:
+\begin{enumerate}[(i)]
+    \item Given a module homomorphism $f:M\rightarrow N$ and a surjective module homomorphism $g:J 	\twoheadrightarrow N$, there exists a lift $h:P\rightarrow N$ of $f$:
+\[\begin{tikzcd}
+                                                 & J \arrow[d, "g", two heads] \\
+M \arrow[r, "f"] \arrow[ru, "\exists h", dashed] & N               
+\end{tikzcd}\]
+\item Every short exact sequence of the form
+\[\begin{tikzcd}
+0 \arrow[r] & A \arrow[r] & B \arrow[r] & M \arrow[r] & 0
+\end{tikzcd}\]
+splits.
+\item There exists a module $Q$ such that $M\oplus Q$ is free.
+\item $Hom_R(M,-)$ is exact.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+
+$(i)\implies (ii)$. The required section is lifted from the identity $M\xrightarrow{id}M$.
+
+$(ii)\implies (iii)$. Build surjection from a free module $f:F\twoheadrightarrow M$ and consider the short exact sequence
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRGJAF9T1Nd9CKAIzkqtRizYBrGACcAFADMAlFx4gM2PASIAmUdXrNWiEADE1vLQKIBmA+ONsAspY19tg5ABYHRyaYcnGIwUADm8ESgirIQALZIZCA4EEhC3NGxCYgiyamIuhkgMfFI+nlI9o4BxW4l2VUpSN7BnEA
+\[\begin{tikzcd}
+0 \arrow[r] & ker(f) \arrow[r] & F \arrow[r, "f"] & M \arrow[r] & 0
+\end{tikzcd}\]
+Since this splits, there exists an isomorphism $F\iso ker(f)\oplus M.$
+
+$(iii) \implies (i)$. Since free modules have the lifting property, $M$ inherits the lift of the free module $M\oplus Q$: % https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBoBGAXVJADcBDAGwFcYkQBZEAX1PU1z5CKchWp0mrdgDkefEBmx4CRUcXEMWbRCABSc-kqFEy6mpqk6OAHWsQ0LOAAIAij3EwoAc3hFQAMwAnCABbJDIQHAgkAGZzSW0QLBAaACMYMChY4l4A4LDEOMjoxAj0zOz4rXY0QIB9cgMQINDYmiikACYqyxBbGAAPLDgcZwALFJBGLDBEqHo4Mc8mloLu4qRRCWqdL0ml+iydHAB3CAOoBFzm-PD2kq2LRP93biA
+\[\begin{tikzcd}
+M\oplus Q \arrow[d, "pr_1", bend left] \arrow[r, "\exists h", dashed] & J \arrow[d, "g", two heads] \\
+M \arrow[u, "i", bend left] \arrow[r, "f"]                            & N                          
+\end{tikzcd}\]
+
+$(i)\iff (iv)$. $Hom_R(M,-)$ is left exact, so it is exact if and only if it preserves surjections. This is exactly condition $(i)$.
+\end{proof}
+
+\begin{definition}Given a ring $R$, define the \defn{Grothendieck group} of finitely generated $R$-modules as 
+$$\G (R)=\Z\{M\in R-\text{Mod} : M \text{ is finitely generated}\}/\sim$$
+Where $\sim$ identifies isomorphic modules and such that $M\sim M'+M''$ whenever there exists a short exact sequence
+$$0\rightarrow M'\rightarrow M\rightarrow M''\rightarrow 0.$$\end{definition}
+
+\begin{example}
+Let $R=\Bfk$ be a field. Two $\Bfk$-vector spaces are isomorphic if and only if they have the same dimension, so $\text{dim}:G(\Bfk)\xrightarrow{\iso} \Z$. 
+\end{example}\begin{example}
+Let $R=\Z$. Any finitely generated abelian group takes the form $$M\iso \Z^{n}\times \Pi_{p \text{ prime}}(\Z/p\Z)^{i_p}$$ where $n=\text{rank}(M)$ and $i_p$ are non-negative integers, only finitely many of which are non-zero\footnote{We allow all indexes to be $0$ in the case $M=0$.}. We canonically build a surjection $f:\Z^{n+r}\twoheadrightarrow M$ where $r=\sum_p i_p$, and note $ker(f)\iso \Z^r$ since $p\Z\iso \Z$. By considering the canonical short exact sequence, $$[\Z^{n+r}]=[\Z^r]+[M],$$ so $$[M]=[\Z^{n+r}]-[\Z^r]=(n+r)[Z]-r[Z]=n[Z].$$ It follows that $G(\Z)$ is generated freely by $[\Z]$ and $\text{rank}:G(\Z)\xrightarrow{\iso} \Z$. 
+\end{example}
+
+We have given $\G(R)$ a strictly formal group structure with identity the trivial module, but in particular for modules $[M]$ and $[M']$ we have $[M]+[M']=[M\oplus M']$. We can therefore hope to define a multiplication by $[M]\cdot [N]=[M\tensor_R N]$, however this multiplication would not be distributive, as the tensor product is not exact\footnote{A multiplication turning $\G(R)$ into a ring does exist, but this is outside the scope of these notes.}. It is, however, exact on the subcategory of projective modules, since any short exact sequence of projectives splits. This motivates the following definition, which is the start of algebraic K-theory.
+
+\begin{definition}
+Given a ring $R$, $$K(R):=\Z\{M\in R-\text{Mod} : M \text{ is finitely generated and projective}\}$$
+\end{definition}
+
+Since higher $K-$groups also exist, the notation $K_0(R)$ is often used for the groups defined here, however we will not make that distinction here. 
+
+\begin{lemma}
+$K(R)$ is a commutative ring, with multiplication given by $$[M]\cdot [N]=[M\tensor_R N].$$
+\end{lemma}
+\begin{proof} It is enough to prove that multiplication is well-defined on generators; the rest will follow strictly formally. If $M$ and $N$ are finitely generated, so is $M\tensor_R N$. The tensor product is associative, preserves isomorphisms in both entries and is exact by a previous comment. It follows the product is well-defined on equivalence classes. The multiplicative unit is given by $R$, and commutativity follows from the commutativity of $\tensor_R$ when $R$ is commutative. All necessary comments about the addition have already been made except this: $M\oplus N$ is projective when $M$ and $N$ are. Indeed, $\oplus$ is exact as a bifunctor, so $$\Hom_R(M\oplus N, -)=\Hom_R(M,-)\oplus \Hom_R(N,-)$$ is a composition of exact functors and is therefore exact.
+\end{proof}
+
+Let's remark that there is nothing special about the subcategory of f.g. projective $R$-modules, and one can imagine extending this definition to any additive subcategory of an abelian category.
+
+Our immediate goal is to prove that $K(-)$ is a functor. We will make liberal use of the (general) tensor-hom adjunction, recorded below. In general, one has to be careful about module-handedness. For our purposes this will not be important, as the tensor product is commutative on modules over commutative rings.
+\begin{lemma}
+There are bijections
+$$\Hom_S(Y\tensor_R X,Z)\iso \Hom_R(Y,\Hom_S(X,Z))$$ where $X$ is an $(R,S)$ bimodule,
+and
+$$\Hom_S(X\tensor_R Y,Z)\iso \Hom_R(Y,\Hom_S(X,Z))$$ where $X$ is an $(S,R)$ bimodule.
+\end{lemma}
+
+\begin{remark}
+In the special case where $X=S$ is a ring with module structure arising from a ring homomorphism $f:R\rightarrow S$, the second bijection takes the form $$\Hom_S(Y\tensor_R S,Z)\iso \Hom_R(Y,f^*Z)$$ where $f^*$ is the restriction of scalars that gives $N$ the $R-$mod structure $r\cdot n=f(r)\cdot n$. This is because $\Hom_S(S,Z)\iso f^*(Z)$ as $R-$modules.
+\end{remark}
+
+\begin{lemma}
+$K(-):\CRing\rightarrow \CRing$ is a functor.
+\end{lemma}
+\begin{proof}
+We have already shown $K(R)$ is a ring. It suffices to show a map $f:R\rightarrow S$ (giving $S$ an $R-$module structure) induces a map $K(R)\rightarrow K(S)$ in a way that preserves composition. To define $f^*$ it is enough to define it on generators of $K(R)$.
+
+Let $M$ be a projective f.g. $R$-mod. $-\otimes_RM$ is a functor $R\text{-mod}\rightarrow R\text{-mod}$ so $f$ induces an $R-$module homomorphism $f_*:R\otimes_RM=M\rightarrow S\otimes_R M$. Note $S\otimes_R M$ also has a canonical $S$-module structure. If $M$ is finitely generated, so is $S\otimes_R M$ as an $S$-module with generators $\{(1\otimes m_i)_{i\in I}\}$. If $M$ is projective as an $R-$mod, so is $S\otimes_R M$ as an $S$-mod since
+$$\Hom_S(S\tensor_R M, -)\iso \Hom_R(M,f^*(-))$$
+by adjunction. Since $f^*$ is obviously exact, and $M$ is projective, $S\tensor M$ is projective.
+
+Since $S\otimes_R -$ preserves isomorphisms and split exact sequences (note every short exact sequence of projective modules splits), the induced map on equivalence classes $K(R)\rightarrow K(S)$ is well-defined. It is a ring homomorphism because it preserves direct sums by additivity, the multiplicative identity since $S\otimes_R R = S$, and multiplication since $$S\otimes_R (M \otimes_R N)\iso  (S\otimes_R M)\otimes_S (S\otimes_R N),$$
+which we can prove using adjunctions and the Yoneda lemma:
+$$\Hom_S((S\tensor_RM)\tensor_S(S\tensor_RN),X)\iso \Hom_R(S\tensor_RM,\Hom_S(S\tensor_RN,X))$$$$\iso \Hom_R(S\tensor_RM,\Hom_R(N,f^*X))\iso \Hom_R(S\tensor_RM\tensor_RN,f^*X)$$$$\iso \Hom_S(S\tensor_S(S\tensor_RM\tensor_RN),X)\iso \Hom_S(S\tensor_RM\tensor_RN,X).$$
+
+To show $K(-)$ is functorial, let $R\xrightarrow{f}S\xrightarrow{g}Z$ be ring homomorphisms, identifying $S$ and $Z$ as $R-$modules. Note this makes $g$ an $R-$module map. Since $-\tensor_R M$ is a functor, $g^*f^*=(g\circ f)^*$ as $R-$module maps. We have already checked that these maps canonically define ring homomorphisms on the set of equivalence classes of modules, from which the functoriality of $K(-)$ follows.
+\end{proof}
+
+\begin{remark}
+$K(-)$ preserves maps between $R-$algebras. Indeed, \newline$f:A\rightarrow B$ is a map of $R-$algebras if and only if there exists a commutative diagram in $\CRing$:
+\[\begin{tikzcd}
+R \arrow[d] \arrow[rd] &   \\
+A \arrow[r,"f"]            & B
+\end{tikzcd}\]
+where the maps $R\rightarrow A$ and $R\rightarrow B$ are those exhibiting $A$ and $B$ as $R-$algebras. Applying $K(-)$ to the diagram shows that $$K(f):K(A)\rightarrow K(B)$$ is a $K(R)-$algebra map.\end{remark}
